@@ -1,0 +1,11 @@
+package: github.com/btccom/rpctransport-go
+import:
+- package: github.com/pkg/errors
+  version: ^0.8.0
+- package: github.com/streadway/amqp
+  version: afe8eee29a74d213b1f3fb2586058157c397da60
+testImport:
+- package: github.com/stretchr/testify
+  version: ^1.1.4
+  subpackages:
+  - assert
