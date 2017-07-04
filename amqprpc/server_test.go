@@ -114,8 +114,7 @@ func TestAmqpConsume(t *testing.T) {
 
 	queueName := "testQueue"
 
-	c := &AmqpClient{}
-	c.init(cfg, queueName)
+	c, err := NewAmqpClient(cfg, queueName)
 	assert.NoError(t, err)
 
 	err = c.Dial()
