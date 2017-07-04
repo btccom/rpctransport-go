@@ -6,6 +6,20 @@ import (
 	"testing"
 )
 
+func TestNewAmqpServer(t *testing.T) {
+	cfg := &AMQPConfig{}
+	err := cfg.LoadDefaultConfigFromEnv()
+	assert.NoError(t, err)
+
+	queue := "str321"
+	server, err := NewAmqpServer(cfg, queue)
+	assert.NoError(t, err)
+	assert.Nil(t, err)
+	assert.NotNil(t, server)
+	assert.IsType(t, AmqpServer{}, *server)
+	assert.Equal(t, queue, server.workQueue)
+}
+
 func TestAmqpDialNeedsValidServer(t *testing.T) {
 	c := &AMQPConfig{}
 	err := c.LoadDefaultConfigFromEnv()
@@ -13,7 +27,8 @@ func TestAmqpDialNeedsValidServer(t *testing.T) {
 
 	c.Hostname = "ghash.io"
 
-	a := NewAmqpServer(c, "queue")
+	a, err := NewAmqpServer(c, "queue")
+	assert.NoError(t, err)
 
 	err = a.Dial()
 	assert.Error(t, err)
@@ -24,7 +39,9 @@ func TestAmqpDialCanBeCalledTwice(t *testing.T) {
 	err := c.LoadDefaultConfigFromEnv()
 	assert.NoError(t, err)
 
-	a := NewAmqpServer(c, "queue")
+	a, err := NewAmqpServer(c, "queue")
+	assert.NoError(t, err)
+
 	err = a.Dial()
 	assert.NoError(t, err)
 	assert.Nil(t, err)
@@ -47,7 +64,9 @@ func TestAmqpCloseWillErrorIfNotConnected(t *testing.T) {
 	err := c.LoadDefaultConfigFromEnv()
 	assert.NoError(t, err)
 
-	a := NewAmqpServer(c, "queue")
+	a, err := NewAmqpServer(c, "queue")
+	assert.NoError(t, err)
+
 	err = a.Close()
 	assert.Error(t, err)
 	assert.Nil(t, a.conn)
@@ -61,7 +80,9 @@ func TestAmqpCanSetPrefetch(t *testing.T) {
 
 	newPrefetch := 123
 
-	a := NewAmqpServer(c, "queue")
+	a, err := NewAmqpServer(c, "queue")
+	assert.NoError(t, err)
+
 	assert.Equal(t, 1, a.prefetch)
 	a.SetPrefetch(newPrefetch)
 	assert.Equal(t, newPrefetch, a.prefetch)
@@ -72,7 +93,8 @@ func TestAmqpDriverConnectDisconnect(t *testing.T) {
 	err := c.LoadDefaultConfigFromEnv()
 	assert.NoError(t, err)
 
-	a := NewAmqpServer(c, "queue")
+	a, err := NewAmqpServer(c, "queue")
+	assert.NoError(t, err)
 
 	err = a.Dial()
 	assert.NoError(t, err)
@@ -93,14 +115,16 @@ func TestAmqpConsume(t *testing.T) {
 	queueName := "testQueue"
 
 	c := &AmqpClient{}
-	c.Init(cfg, queueName)
+	c.init(cfg, queueName)
 	assert.NoError(t, err)
 
 	err = c.Dial()
 	assert.NoError(t, err)
 	defer c.Close()
 
-	server := NewAmqpServer(cfg, queueName)
+	server, err := NewAmqpServer(cfg, queueName)
+	assert.NoError(t, err)
+
 	err = server.Dial()
 	assert.NoError(t, err)
 	defer server.Close()

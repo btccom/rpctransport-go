@@ -6,22 +6,22 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func NewAmqpServer(cfg *AMQPConfig, queue string) *AmqpServer {
+func NewAmqpServer(cfg *AMQPConfig, queue string) (*AmqpServer, error) {
 	return &AmqpServer{
-		cfg:      cfg,
-		prefetch: 1,
-		queue:    queue,
-	}
+		cfg:       cfg,
+		prefetch:  1,
+		workQueue: queue,
+	}, nil
 }
 
 type AmqpServer struct {
-	cfg      *AMQPConfig
-	queue    string
-	conn     *amqp.Connection
-	ch       *amqp.Channel
-	q        amqp.Queue
-	prefetch int
-	msgs     <-chan amqp.Delivery
+	cfg       *AMQPConfig
+	workQueue string
+	conn      *amqp.Connection
+	ch        *amqp.Channel
+	q         amqp.Queue
+	prefetch  int
+	msgs      <-chan amqp.Delivery
 }
 
 func (ad *AmqpServer) Consume() <-chan rpc.ServerRequest {
@@ -51,12 +51,12 @@ func (ad *AmqpServer) Dial() error {
 	}
 
 	q, err := ch.QueueDeclare(
-		ad.queue, // name
-		false,    // durable
-		false,    // delete when usused
-		false,    // exclusive
-		false,    // no-wait
-		nil,      // arguments
+		ad.workQueue, // name
+		false,        // durable
+		false,        // delete when usused
+		false,        // exclusive
+		false,        // no-wait
+		nil,          // arguments
 	)
 
 	if err != nil {

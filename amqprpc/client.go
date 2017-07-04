@@ -6,6 +6,16 @@ import (
 	"math/rand"
 )
 
+func NewAmqpClient(cfg *AMQPConfig, queue string) (*AmqpClient, error) {
+	a := &AmqpClient{}
+	err := a.init(cfg, queue)
+	if err != nil {
+		return nil, err
+	}
+
+	return a, nil
+}
+
 type AmqpClient struct {
 	cfg       *AMQPConfig
 	conn      *amqp.Connection
@@ -15,7 +25,7 @@ type AmqpClient struct {
 	workQueue string
 }
 
-func (ad *AmqpClient) Init(cfg *AMQPConfig, queue string) error {
+func (ad *AmqpClient) init(cfg *AMQPConfig, queue string) error {
 	ad.cfg = cfg
 	ad.workQueue = queue
 

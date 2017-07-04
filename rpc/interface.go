@@ -5,7 +5,13 @@ import (
 	"sync"
 )
 
-type Consumer interface {
+type Client interface {
+	Request(req []byte) ([]byte, error)
+	Dial() error
+	Close() error
+}
+
+type Server interface {
 	Consume() <-chan ServerRequest
 	Dial() error
 	Close() error
@@ -32,7 +38,7 @@ func NewEnvVarMap(vars map[string]string) *EnvVarMap {
 }
 func (m *EnvVarMap) Var(key string) (string, error) {
 	m.RLock()
-	m.RUnlock()
+	defer m.RUnlock()
 	if v, ok := m.M[key]; !ok {
 		return "", fmt.Errorf("Unknown envvar name")
 	} else {
