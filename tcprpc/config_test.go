@@ -1,8 +1,8 @@
 package tcprpc
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestDefaultEnvVars(t *testing.T) {
@@ -29,4 +29,3 @@ func TestDefaultEnvVars(t *testing.T) {
 	assert.Equal(t, "TRANSPORT_TCP_PORT", p)
 	assert.Equal(t, "TRANSPORT_TCP_TLS", tls)
 }
-

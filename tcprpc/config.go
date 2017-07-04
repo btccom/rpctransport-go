@@ -1,6 +1,7 @@
 package tcprpc
 
 import (
+	"fmt"
 	"github.com/btccom/rpctransport-go/rpc"
 	"github.com/btccom/rpctransport-go/util"
 	"strconv"
@@ -11,6 +12,14 @@ type TCPConfig struct {
 	Port int
 	Type string
 }
+
+func (c *TCPConfig) Dsn() string {
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
+}
+
+var (
+	msgEOF = []byte{0x0d, 0x0a}
+)
 
 const (
 	varPort = "port"
@@ -24,11 +33,11 @@ var DefaultTCPEnvVars = rpc.NewEnvVarMap(map[string]string{
 	varTLS:  "TRANSPORT_TCP_TLS",
 })
 
-func (t *TCPConfig) LoadDefaultConfigFromEnv(queue string) error {
-	return t.LoadConfigFromEnv(queue, DefaultTCPEnvVars)
+func (t *TCPConfig) LoadDefaultConfigFromEnv() error {
+	return t.LoadConfigFromEnv(DefaultTCPEnvVars)
 }
 
-func (t *TCPConfig) LoadConfigFromEnv(queue string, varMap *rpc.EnvVarMap) error {
+func (t *TCPConfig) LoadConfigFromEnv(varMap *rpc.EnvVarMap) error {
 	err := varMap.Check([]string{varHost, varPort, varTLS}...)
 	if err != nil {
 		return err

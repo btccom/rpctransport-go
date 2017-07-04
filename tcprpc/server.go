@@ -8,6 +8,12 @@ import (
 	"strconv"
 )
 
+func NewTCPServer(cfg *TCPConfig) (*TcpServer, error) {
+	return &TcpServer{
+		cfg: cfg,
+	}, nil
+}
+
 type TcpServer struct {
 	cfg      *TCPConfig
 	listener net.Listener
@@ -46,8 +52,6 @@ func (td *TcpServer) Dial() error {
 func (td *TcpServer) Consume() <-chan rpc.ServerRequest {
 	requests := make(chan rpc.ServerRequest)
 
-	ending := []byte{0x0d, 0x0a}
-
 	go func(listener net.Listener) {
 		for {
 			conn, err := listener.Accept()
@@ -72,7 +76,7 @@ func (td *TcpServer) Consume() <-chan rpc.ServerRequest {
 					data = append(data, buf[:reqLen]...)
 					n += reqLen
 
-					if bytes.Equal(data[n-2:], ending) {
+					if bytes.Equal(data[n-2:], msgEOF) {
 						break
 					}
 				}
