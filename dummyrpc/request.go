@@ -6,7 +6,7 @@ type DummyRequest struct {
 }
 
 func (dr *DummyRequest) Respond(respond []byte) error {
-	dr.dummyServer.response = append(dr.dummyServer.response, respond)
+	dr.dummyServer.Response = append(dr.dummyServer.Response, respond)
 	return nil
 }
 

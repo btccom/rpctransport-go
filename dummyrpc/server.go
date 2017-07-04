@@ -4,21 +4,21 @@ import "github.com/btccom/rpctransport-go/rpc"
 
 func NewDummyServer() *DummyServer {
 	return &DummyServer{
-		response: make([][]byte, 0),
-		in:       make(chan []byte),
+		Response: make([][]byte, 0),
+		In:       make(chan []byte),
 	}
 }
 
 type DummyServer struct {
-	response [][]byte
-	in       chan []byte
+	Response [][]byte
+	In       chan []byte
 }
 
 func (dd *DummyServer) Consume() <-chan rpc.ServerRequest {
 	requests := make(chan rpc.ServerRequest)
 
 	go func() {
-		for msg := range dd.in {
+		for msg := range dd.In {
 			requests <- &DummyRequest{dd, msg}
 		}
 	}()
