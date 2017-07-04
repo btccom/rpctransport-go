@@ -8,17 +8,17 @@ import (
 	"strconv"
 )
 
-type ServerDriverTcp struct {
+type TcpServer struct {
 	cfg      *TCPConfig
 	listener net.Listener
 }
 
-func (td *ServerDriverTcp) Init(cfg *TCPConfig) error {
+func (td *TcpServer) Init(cfg *TCPConfig) error {
 	td.cfg = cfg
 	return nil
 }
 
-func (td *ServerDriverTcp) Close() error {
+func (td *TcpServer) Close() error {
 	if td.listener == nil {
 		return fmt.Errorf("TCP Server not connected")
 	}
@@ -29,7 +29,7 @@ func (td *ServerDriverTcp) Close() error {
 	return nil
 }
 
-func (td *ServerDriverTcp) Dial() error {
+func (td *TcpServer) Dial() error {
 	if td.listener != nil {
 		return nil
 	}
@@ -43,7 +43,7 @@ func (td *ServerDriverTcp) Dial() error {
 	return nil
 }
 
-func (td *ServerDriverTcp) Consume() <-chan rpc.ServerRequest {
+func (td *TcpServer) Consume() <-chan rpc.ServerRequest {
 	requests := make(chan rpc.ServerRequest)
 
 	ending := []byte{0x0d, 0x0a}
@@ -77,7 +77,7 @@ func (td *ServerDriverTcp) Consume() <-chan rpc.ServerRequest {
 					}
 				}
 
-				requests <- &ServerTcpRequest{conn, data[:n-2]}
+				requests <- &TcpRequest{conn, data[:n-2]}
 			}()
 		}
 	}(td.listener)

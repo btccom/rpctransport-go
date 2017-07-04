@@ -7,6 +7,12 @@ import (
 
 func TestDefaultEnvVars(t *testing.T) {
 	defaults := DefaultAMQPEnvVars
+
+	assert.Equal(t, "host", varHost)
+	assert.Equal(t, "port", varPort)
+	assert.Equal(t, "user", varUser)
+	assert.Equal(t, "password", varPassword)
+
 	assert.NoError(t, defaults.Check("host"))
 	assert.NoError(t, defaults.Check("port"))
 	assert.NoError(t, defaults.Check("user"))

@@ -7,6 +7,11 @@ import (
 
 func TestDefaultEnvVars(t *testing.T) {
 	defaults := DefaultTCPEnvVars
+
+	assert.Equal(t, "host", varHost)
+	assert.Equal(t, "port", varPort)
+	assert.Equal(t, "tls", varTLS)
+
 	assert.NoError(t, defaults.Check("host"))
 	assert.NoError(t, defaults.Check("port"))
 	assert.NoError(t, defaults.Check("tls"))
