@@ -2,8 +2,8 @@ package amqprpc
 
 import (
 	"github.com/stretchr/testify/assert"
-	"testing"
 	"sync"
+	"testing"
 )
 
 func TestAmqpDialNeedsValidServer(t *testing.T) {
@@ -130,4 +130,3 @@ func TestAmqpConsume(t *testing.T) {
 	wg.Wait()
 
 }
-

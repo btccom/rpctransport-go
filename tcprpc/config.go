@@ -15,7 +15,7 @@ type TCPConfig struct {
 const (
 	varPort = "port"
 	varHost = "host"
-	varTLS = "tls"
+	varTLS  = "tls"
 )
 
 var DefaultTCPEnvVars = rpc.NewEnvVarMap(map[string]string{

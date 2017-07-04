@@ -18,9 +18,9 @@ type AMQPConfig struct {
 }
 
 const (
-	varPort = "port"
-	varHost = "host"
-	varUser = "user"
+	varPort     = "port"
+	varHost     = "host"
+	varUser     = "user"
 	varPassword = "password"
 )
 

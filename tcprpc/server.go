@@ -3,9 +3,9 @@ package tcprpc
 import (
 	"bytes"
 	"fmt"
+	"github.com/btccom/rpctransport-go/rpc"
 	"net"
 	"strconv"
-	"github.com/btccom/rpctransport-go/rpc"
 )
 
 type ServerDriverTcp struct {

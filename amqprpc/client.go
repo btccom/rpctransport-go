@@ -1,8 +1,8 @@
 package amqprpc
 
 import (
-	"github.com/streadway/amqp"
 	"fmt"
+	"github.com/streadway/amqp"
 	"math/rand"
 )
 
@@ -83,7 +83,6 @@ func (ad *AmqpClient) Dial() error {
 
 	return nil
 }
-
 
 func randomString(l int) string {
 	bytes := make([]byte, l)

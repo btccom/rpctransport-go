@@ -18,4 +18,3 @@ func (r *ServerTcpRequest) Respond(response []byte) error {
 
 	return nil
 }
-
