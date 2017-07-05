@@ -11,10 +11,11 @@ import (
 var DefaultAMQPPort = 5672
 
 type AMQPConfig struct {
-	Username string
-	Password string
-	Hostname string
-	Port     int
+	Username        string
+	Password        string
+	Hostname        string
+	Port            int
+	MandatryPublish bool
 }
 
 const (

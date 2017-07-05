@@ -1,9 +1,9 @@
 package rpc
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"fmt"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestEnvVarNotFound(t *testing.T) {
@@ -35,7 +35,7 @@ func TestEnvMap(t *testing.T) {
 	}
 
 	descCreate := "test new EnvVarMap"
-	t.Run(descCreate, func (t *testing.T) {
+	t.Run(descCreate, func(t *testing.T) {
 		m := NewEnvVarMap(envmap)
 		assert.NotNil(t, m)
 		assert.IsType(t, EnvVarMap{}, *m)

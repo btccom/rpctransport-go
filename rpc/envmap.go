@@ -1,8 +1,8 @@
 package rpc
 
 import (
-	"sync"
 	"fmt"
+	"sync"
 )
 
 type EnvVarMap struct {
@@ -42,4 +42,3 @@ func (m *EnvVarMap) Check(vars ...string) error {
 
 	return nil
 }
-
