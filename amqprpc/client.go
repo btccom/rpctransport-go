@@ -151,7 +151,7 @@ func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
 }
 
-func (ad *AmqpClient) RequestAsync(request []byte) (<- chan []byte, <- chan error) {
+func (ad *AmqpClient) RequestAsync(request []byte) (<-chan []byte, <-chan error) {
 
 	corrId := randomString(32)
 
@@ -162,8 +162,8 @@ func (ad *AmqpClient) RequestAsync(request []byte) (<- chan []byte, <- chan erro
 
 	go func() {
 		err := ad.ch.Publish(
-			"",                     // exchange
-			ad.workQueue,           // routing key
+			"",                      // exchange
+			ad.workQueue,            // routing key
 			ad.cfg.MandatoryPublish, // mandatory
 			false, // immediate
 			amqp.Publishing{

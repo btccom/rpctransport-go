@@ -89,7 +89,7 @@ func (c *TCPClient) readResponse() ([]byte, error) {
 	return data, nil
 }
 
-func (c *TCPClient) RequestAsync(body []byte) (<- chan []byte, <- chan error) {
+func (c *TCPClient) RequestAsync(body []byte) (<-chan []byte, <-chan error) {
 
 	c.Lock()
 	c.conn.Write(body)
@@ -98,7 +98,7 @@ func (c *TCPClient) RequestAsync(body []byte) (<- chan []byte, <- chan error) {
 		done: make(chan *pendingRequest),
 	}
 	resultChan := make(chan []byte)
-	errorChan := make(chan []byte)
+	errorChan := make(chan error)
 	c.dueResponses <- request
 	go func() {
 		complete := <-request.done
@@ -122,9 +122,9 @@ func (c *TCPClient) RequestAsync(body []byte) (<- chan []byte, <- chan error) {
 func (c *TCPClient) Request(body []byte) ([]byte, error) {
 	resultChan, errorChan := c.RequestAsync(body)
 	select {
-	case result := <- resultChan:
+	case result := <-resultChan:
 		return result, nil
-	case err := <- errorChan:
+	case err := <-errorChan:
 		return nil, err
 	}
 }
