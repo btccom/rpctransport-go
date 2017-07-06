@@ -146,6 +146,11 @@ func TestAmqpConsume(t *testing.T) {
 		case msg := <-server.Consume():
 			assert.Equal(t, input, msg.Body())
 			msg.Respond(output)
+
+			amqpReq, ok := msg.(*AmqpRequest)
+			assert.True(t, ok)
+			assert.Equal(t, amqpReq.d.CorrelationId, amqpReq.CorrID())
+
 			wg.Done()
 		}
 	}()

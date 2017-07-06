@@ -7,6 +7,12 @@ type AmqpRequest struct {
 	d  amqp.Delivery
 }
 
+// CorrID returns the correlation ID for this AMQP
+// request. 
+func (r *AmqpRequest) CorrID() string {
+	return r.d.CorrelationId
+}
+
 func (r *AmqpRequest) Body() []byte {
 	return r.d.Body
 }
