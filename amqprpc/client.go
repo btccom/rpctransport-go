@@ -164,7 +164,7 @@ func (ad *AmqpClient) Request(request []byte) ([]byte, error) {
 		err := ad.ch.Publish(
 			"",                     // exchange
 			ad.workQueue,           // routing key
-			ad.cfg.MandatryPublish, // mandatory
+			ad.cfg.MandatoryPublish, // mandatory
 			false, // immediate
 			amqp.Publishing{
 				ContentType:   "text/plain",
