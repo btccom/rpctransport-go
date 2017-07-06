@@ -182,7 +182,7 @@ func (ad *AmqpClient) RequestAsync(request []byte) (<- chan []byte, <- chan erro
 	return pending.resultChan, pending.errorChan
 }
 
-func (ad *AmqpClient) Request(request []byte) {
+func (ad *AmqpClient) Request(request []byte) ([]byte, error) {
 	resultChan, errorChan := ad.RequestAsync(request)
 
 	select {
