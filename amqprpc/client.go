@@ -151,7 +151,7 @@ func randInt(min int, max int) int {
 	return min + rand.Intn(max-min)
 }
 
-func (ad *AmqpClient) Request(request []byte) ([]byte, error) {
+func (ad *AmqpClient) RequestAsync(request []byte) (<- chan []byte, <- chan error) {
 
 	corrId := randomString(32)
 
@@ -179,10 +179,16 @@ func (ad *AmqpClient) Request(request []byte) ([]byte, error) {
 		}
 	}()
 
+	return pending.resultChan, pending.errorChan
+}
+
+func (ad *AmqpClient) Request(request []byte) {
+	resultChan, errorChan := ad.RequestAsync(request)
+
 	select {
-	case result := <-pending.resultChan:
+	case result := <-resultChan:
 		return result, nil
-	case err := <-pending.errorChan:
+	case err := <-errorChan:
 		return nil, err
 	}
 }
