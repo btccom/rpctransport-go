@@ -125,9 +125,11 @@ func (ad *AmqpClient) Dial() error {
 
 	go func() {
 		for d := range ad.msgs {
+			ad.sendLock.RLock()
 			if c, ok := ad.pending[d.CorrelationId]; ok {
 				c.res(d.Body)
 			}
+			ad.sendLock.RUnlock()
 		}
 	}()
 
