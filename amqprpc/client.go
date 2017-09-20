@@ -123,7 +123,14 @@ func (ad *AmqpClient) Dial() error {
 		return err
 	}
 
-	go func() {
+	ad.conn = conn
+	ad.ch = ch
+	ad.msgs = msgs
+	ad.q = q
+
+	started := make(chan bool)
+	go func(done chan bool) {
+		done <- true
 		for d := range ad.msgs {
 			ad.sendLock.RLock()
 			if c, ok := ad.pending[d.CorrelationId]; ok {
@@ -131,12 +138,8 @@ func (ad *AmqpClient) Dial() error {
 			}
 			ad.sendLock.RUnlock()
 		}
-	}()
-
-	ad.conn = conn
-	ad.ch = ch
-	ad.msgs = msgs
-	ad.q = q
+	}(started)
+	<-started
 
 	return nil
 }
