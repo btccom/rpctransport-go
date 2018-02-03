@@ -6,7 +6,6 @@ import (
 	"sync"
 	"strconv"
 	"github.com/pkg/errors"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDummyInterface(t *testing.T) {
@@ -18,36 +17,42 @@ func TestDummyInterface(t *testing.T) {
 func TestDummyClientCanPassBackErrors(t *testing.T) {
 	server := NewDummyServer()
 	_assert.NoError(t, server.Dial())
-	_assert.NoError(t, server.Close())
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func(server *DummyServer) {
-		msg := <- server.Consume()
-		dummyReq, ok := msg.(*DummyRequest)
-		_assert.True(t, ok)
-		_assert.IsType(t, DummyRequest{}, *dummyReq)
-		dummyReq.pending.errorChan <- errors.New("oops-a-testing-error-occurred")
-		wg.Done()
-	}(server)
 
 	client := NewDummyClient(server)
 	_assert.NoError(t, client.Dial())
 
+	var startup sync.WaitGroup
+	startup.Add(1)
+
+	go func(server *DummyServer) {
+		startup.Done()
+		select {
+		case msg := <- server.Consume():
+			dummyReq, ok := msg.(*DummyRequest)
+			_assert.True(t, ok)
+			_assert.IsType(t, DummyRequest{}, *dummyReq)
+			dummyReq.pending.errorChan <- errors.New("oops-a-testing-error-occurred")
+		}
+
+	}(server)
+
+	startup.Wait()
+
 	_, err := client.Request([]byte{})
-	assert.Error(t, err)
+	_assert.Error(t, err)
+	_assert.EqualError(t, err, "oops-a-testing-error-occurred")
 
 	server.Close()
-	wg.Wait()
 	client.Close()
 }
 
 func TestDummyServer(t *testing.T) {
 	server := NewDummyServer()
 	_assert.NoError(t, server.Dial())
-	_assert.NoError(t, server.Close())
 
 	var wg sync.WaitGroup
+	wg.Add(1)
+
 	go func(server *DummyServer) {
 		for msg := range server.Consume() {
 			bodyStr := string(msg.Body())
