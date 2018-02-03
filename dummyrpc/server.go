@@ -19,6 +19,7 @@ func (dd *DummyServer) Consume() <-chan rpc.ServerRequest {
 		for request := range dd.In {
 			requests <- &DummyRequest{dd, request}
 		}
+		close(requests)
 	}()
 
 	return requests
@@ -29,5 +30,6 @@ func (dd *DummyServer) Dial() error {
 }
 
 func (dd *DummyServer) Close() error {
+	close(dd.In)
 	return nil
 }
