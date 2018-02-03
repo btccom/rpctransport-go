@@ -2,14 +2,14 @@ package dummyrpc
 
 type DummyRequest struct {
 	dummyServer *DummyServer
-	body        []byte
+	pending *pendingRequest
 }
 
 func (dr *DummyRequest) Respond(respond []byte) error {
-	dr.dummyServer.Response = append(dr.dummyServer.Response, respond)
+	dr.pending.resultChan <- respond
 	return nil
 }
 
 func (dr *DummyRequest) Body() []byte {
-	return dr.body
+	return dr.pending.request
 }
