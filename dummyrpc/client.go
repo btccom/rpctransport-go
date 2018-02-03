@@ -7,7 +7,6 @@ import (
 
 func NewDummyClient(server *DummyServer) rpc.Client {
 	return &DummyClient{
-		pending: make(map[string]*pendingRequest),
 		server: server,
 	}
 }
@@ -27,7 +26,6 @@ func newPendingRequest(request []byte) *pendingRequest {
 }
 
 type DummyClient struct {
-	pending map[string]*pendingRequest
 	server *DummyServer
 	sendLock sync.RWMutex
 }
@@ -42,9 +40,7 @@ func (ad *DummyClient) Dial() error {
 
 func (ad *DummyClient) RequestAsync(request []byte) (<-chan []byte, <-chan error) {
 	pending := newPendingRequest(request)
-
 	ad.server.In <- pending
-
 	return pending.resultChan, pending.errorChan
 }
 
