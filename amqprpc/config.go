@@ -40,7 +40,7 @@ func (c *AMQPConfig) LoadDefaultConfigFromEnv() error {
 }
 
 func (c *AMQPConfig) LoadConfigFromEnv(varMap *rpc.EnvVarMap) error {
-	err := varMap.Check([]string{varHost, varPort, varUser, varPassword}...)
+	err := varMap.Check([]string{varHost, varVHost, varPort, varUser, varPassword}...)
 	if err != nil {
 		return err
 	}
