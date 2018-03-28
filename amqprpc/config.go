@@ -11,22 +11,25 @@ import (
 var DefaultAMQPPort = 5672
 
 type AMQPConfig struct {
-	Username         string
-	Password         string
 	Hostname         string
 	Port             int
+	Username         string
+	Password         string
+	VHost            string
 	MandatoryPublish bool
 }
 
 const (
-	varPort     = "port"
 	varHost     = "host"
+	varPort     = "port"
+	varVHost    = "vhost"
 	varUser     = "user"
 	varPassword = "password"
 )
 
 var DefaultAMQPEnvVars = rpc.NewEnvVarMap(map[string]string{
 	"host":     "TRANSPORT_AMQP_HOST",
+	"vhost":    "TRANSPORT_AMQP_VHOST",
 	"port":     "TRANSPORT_AMQP_PORT",
 	"user":     "TRANSPORT_AMQP_USER",
 	"password": "TRANSPORT_AMQP_PASSWORD",
@@ -44,6 +47,7 @@ func (c *AMQPConfig) LoadConfigFromEnv(varMap *rpc.EnvVarMap) error {
 
 	hostVar, _ := varMap.Var(varHost)
 	portVar, _ := varMap.Var(varPort)
+	vhostVar, _ := varMap.Var(varVHost)
 	userVar, _ := varMap.Var(varUser)
 	passVar, _ := varMap.Var(varPassword)
 
@@ -61,6 +65,7 @@ func (c *AMQPConfig) LoadConfigFromEnv(varMap *rpc.EnvVarMap) error {
 
 	c.Hostname = util.GetEnv(hostVar, "localhost")
 	c.Port = port
+	c.VHost = util.GetEnv(vhostVar, "")
 	c.Username = util.GetEnv(userVar, "guest")
 	c.Password = util.GetEnv(passVar, "guest")
 
@@ -68,5 +73,5 @@ func (c *AMQPConfig) LoadConfigFromEnv(varMap *rpc.EnvVarMap) error {
 }
 
 func (c *AMQPConfig) Dsn() string {
-	return fmt.Sprintf("amqp://%s:%s@%s:%d/", c.Username, c.Password, c.Hostname, c.Port)
+	return fmt.Sprintf("amqp://%s:%s@%s:%d/%s", c.Username, c.Password, c.Hostname, c.Port, c.VHost)
 }
